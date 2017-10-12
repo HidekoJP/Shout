@@ -39,8 +39,20 @@ class App extends TrackerReact(Component) {
       )
     } else
       return (
-        <div>
-          <AccountsUIWrapper /> 
+        <div className="not_logged_container">
+          <div className="text">
+          <h1> Shout! </h1>
+          Speak with anyone withing a 2.5km radius around you. <br/>
+          Please note! <br/>
+          Adding someone as a friend reveals to them: <br/>
+          * your facebook name <br/>
+          * your current location <br/>
+          * whever you were online in the last 5 minutes. <br/>
+          <br/>
+          </div>
+          <div className='login'>
+            <AccountsUIWrapper /> 
+          </div>
         </div>
     )
   }
