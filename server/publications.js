@@ -76,7 +76,7 @@ const updateCurrentLocation = (data) => {
         "ts": new Date(),
       }
     })
-  else
+  else if (user)
     Friends.insert({
       _id: user._id,
       name: user.username,
