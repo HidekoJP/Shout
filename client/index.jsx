@@ -28,9 +28,23 @@ this.distanceBetween = (from, to) => {
 }
 
 class App extends TrackerReact(Component) {
-  render() {
+	componentWillMount() {
+    if (!this.state)
+      return this.setState({'loading':true})
+	}
+
+	loader() {
+		return <i className="fa fa-spin fa-cog fa-5x" aria-hidden="true"></i>
+	}
+
+	login() {
+		return <AccountsUIWrapper /> 
+	}
+  
+	render() {
     let user = Meteor.user()
-    if (user) {
+		let loader = (this.state.loading) ? this.loader() : this.login()
+    if (!this.state.loading && user) {
       return (
         <div>
           <FriendsList />
@@ -38,6 +52,7 @@ class App extends TrackerReact(Component) {
         </div>
       )
     } else
+			Meteor.setTimeout( () => { this.setState({loading: false})}, 4000)
       return (
         <div className="not_logged_container">
           <div className="text">
@@ -51,7 +66,7 @@ class App extends TrackerReact(Component) {
           <br/>
           </div>
           <div className='login'>
-            <AccountsUIWrapper /> 
+						{loader}
           </div>
         </div>
     )
