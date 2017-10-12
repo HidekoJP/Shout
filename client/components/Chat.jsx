@@ -22,7 +22,7 @@ class Chatline extends TrackerReact(Component) {
   }
 
   componentWillMount() {
-    if (this.props.data.text.indexOf('@'+this.user().name) > -1) {
+    if (this.user() && this.props.data.text.indexOf('@'+this.user().name) > -1) {
       let a = new Notification(this.props.data.name, {
         body: this.props.data.text
       })
