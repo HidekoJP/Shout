@@ -150,17 +150,22 @@ Meteor.publish({
       return (line.ts < now() - 1000*600)
     })
     let lineIds = _.pluck(new_lines, '_id')
-    let user = Meteor.user()
-    let me = Friends.findOne(user._id)
-    let friends_query = {
-      $or: [
-        {_id: {$in: me.friends}},
-        {_id: user._id}
-      ]
-    }
-    return [
-      Chat.find({_id: {$nin: lineIds}}),
-      Friends.find(friends_query)
+    let cursors = [
+      Chat.find({_id: {$nin: lineIds}})
     ]
+    let user = Meteor.user()
+    if (user) {
+      let me = Friends.findOne(user._id)
+      let friends_query = {
+        $or: [
+          {_id: {$in: me.friends}},
+          {_id: user._id}
+        ]
+      }
+      cursors.push(
+        Friends.find(friends_query)
+      )
+    }
+    return cursors
   },
 })
