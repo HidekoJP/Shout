@@ -49,17 +49,17 @@ Meteor.methods({
 Meteor.methods({
   'remove friend'(fid) {
     let user_id = Meteor.user()._id
-    Friends.update(user_id, {
+    Friends.update(fid, {
       $pull: {
-        'friends': fid
+        'friends': user_id
       }
     })
   },
   'add friend'(fid) {
     let user_id = Meteor.user()._id
-    Friends.update(user_id, {
+    Friends.update(fid, {
       $addToSet: {
-        'friends': fid
+        'friends': user_id
       }
     })
   }
@@ -67,7 +67,7 @@ Meteor.methods({
 
 const updateCurrentLocation = (data) => {
 	let user = Meteor.user()
-  if (Friends.findOne(user._id))
+  if (user && Friends.findOne(user._id))
     Friends.update({
       _id: user._id
     }, {
@@ -119,9 +119,15 @@ Meteor.publish({
 			}
     }
     let friends_query = locationQuery(data)
-    let user = Meteor.user()
+    let online_now = Friends.find(friends_query)
+    .fetch()
+    .filter((friend) => {
+      console.log(friend.ts.valueOf(), now()-1000*600, friend.ts > now() - 1000*6)
+      return (friend.ts > now() - 1000*600)
+    })
+    let friendIds = _.pluck(online_now, '_id')
     return [
-      Friends.find(friends_query)
+      Friends.find({_id: {$in: friendIds}}),
     ]
   },
   'friends'(data) {

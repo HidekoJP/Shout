@@ -42,9 +42,9 @@ class Friend extends Component {
     let date = moment(this.props.data.ts)
     let now = moment()
     now.subtract(5, 'minutes')
-    if (this.props.friend && date > now) 
+    if (this.props.his_friend(this.props.data) && date > now) 
       online_marker = <div className="marker">*</div>
-    let op = (this.props.friend) ? this.removeFriend() : this.addFriend()
+    let op = (this.props.my_friend(this.props.data)) ? this.removeFriend() : this.addFriend()
     let distance = distanceBetween(
       this.user_location(), 
       this.location()
@@ -78,14 +78,18 @@ export default class FriendsList extends TrackerReact(Component) {
     super()
   }
 
-  is_friend(friend) {
+  his_friend(friend) {
     return (this._user.friends.indexOf(friend._id) > -1)
+  }
+
+  my_friend(friend) {
+    return (friend.friends.indexOf(this._user._id) > -1)
   }
 
   friends() {
     const friends = Friends.find().fetch()
     if (this.state.show != 'all')
-      return friends.filter(this.is_friend.bind(this))
+      return friends.filter(this.my_friend.bind(this))
     return friends
   }
 
@@ -103,7 +107,7 @@ export default class FriendsList extends TrackerReact(Component) {
 
   componentWillMount() {
     if (!this.state)
-      return this.selectFriends()
+      return this.selectAll()
   }
 
   render() {
@@ -122,7 +126,13 @@ export default class FriendsList extends TrackerReact(Component) {
       return (friend._id != Meteor.user()._id)
     })
     .map((friend) => {
-      return (<Friend key={friend.name} data={friend} friend={this.is_friend(friend)} />)
+      return (
+        <Friend 
+          key={friend.name} 
+          data={friend} 
+          my_friend={this.my_friend.bind(this)} 
+          his_friend={this.his_friend.bind(this)} 
+        />)
     })
     return (
       <div className='friends_container'>

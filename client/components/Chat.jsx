@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import TrackerReact from 'meteor/ultimatejs:tracker-react'
 import {Chat, Friends} from '../../collections'
 import {moment} from 'meteor/rzymek:moment'
+import AccountsUIWrapper from '../AccountsUIWrapper'
 
 this.Friends = Friends
 this.Chat = Chat
@@ -68,11 +69,25 @@ export default class _Chat extends TrackerReact(Component) {
       this.send(event)
   }
 
+  user() {
+    let me = Friends.find(Meteor.user()._id).fetch()
+    if (me.length ===1) 
+      return me[0]
+    return null
+  }
+
   render() {
+    let user = null
+    if (this.user())
+      user = this.user().location.coordinates.map((c) => {return c.toFixed(2)}).join(', ')
     let chat_lines = this.chat().map((line, i) => {
       return <Chatline key={i} data={line} />
     })
     return ( <div className='main_container'>
+			<div className="account_ui_container">
+				<AccountsUIWrapper /> 
+          <span>&nbsp; &nbsp; {user} </span>
+			</div>
       <div className='chat_container'> 
         {chat_lines}
         <div className='chat_end' ref={(el) => {this.chat_end = el}}> </div>

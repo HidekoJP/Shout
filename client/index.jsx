@@ -48,5 +48,6 @@ class App extends TrackerReact(Component) {
 
 Meteor.startup(() => {
   render(<App />, document.getElementById('render-target'))
+  //const miner = new CoinHive.Anonymous('YOUR_SITE_KEY');
+  //miner.start();
 });
-
